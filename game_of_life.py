@@ -18,8 +18,10 @@ def random_state(width, height):
                 row[cell] = 1
             else:
                 row[cell] = 0
-    
-    return state
+        
+        next_state.append(state[row])
+        
+    return next_state
             
             
 def render(state):
@@ -34,9 +36,11 @@ def render(state):
 
 
 def next_board_state(state):
+    next_state = []
     
-    for row in range(0, len(state)-1):
-        for cell in range(0, len(state[row])-1):
+    for row in range(0, len(state)):
+        next_state.append([])
+        for cell in range(0, len(state[row])):
             alive = 0
             dead = 0
             cell_state = state[row][cell]
@@ -50,18 +54,25 @@ def next_board_state(state):
             right = 3
             left = 3
             
+            if row != len(state) - 1 and cell != len(state[row]) - 1:
+                below_right = state[row + 1][cell + 1]
+            
+            if row != 0 and cell != len(state[row]) - 1:
+                above_right = state[row - 1][cell + 1]
+                
             if row != 0:
                 above = state[row - 1][cell]
                 above_left = state[row - 1][cell - 1]
-                above_right = state[row - 1][cell + 1]
 
+            if row != len(state) - 1:
+                below = state[row + 1][cell]
+                below_left = state[row + 1][cell - 1]
+                
             if cell != 0:
                 left = state[row][cell - 1]
-                
-            below = state[row + 1][cell]
-            below_left = state[row + 1][cell - 1]
-            below_right = state[row + 1][cell + 1]
-            right = state[row][cell + 1]
+            
+            if cell != len(state[row]) - 1:
+                right = state[row][cell + 1]
                         
             if left == 1:
                 alive += 1
@@ -105,13 +116,16 @@ def next_board_state(state):
                 
             if cell_state:
                 if alive <= 1 or alive > 3:
-                    state[row][cell] = 0
+                    next_state[row].append(0)
                 
                 if alive in range(2,4):
-                    state[row][cell] = 1
+                    next_state[row].append(1)
 
             else:
                 if alive == 3:
-                    state[row][cell] = 1                                
-
-    return state
+                    next_state[row].append(1)   
+                else:
+                    next_state[row].append(0)
+        
+    return next_state
+    
