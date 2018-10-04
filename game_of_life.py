@@ -1,10 +1,11 @@
 import random
+import os
 
 
 def dead_state(width, height):
     state = []
     for i in range(0,height):
-        state.append([0] * width)
+        state.append([" "] * width)
     return state
 
 
@@ -15,13 +16,11 @@ def random_state(width, height):
         for cell in range(0, len(row)):
             random_num = random.random()
             if random_num >= 0.5:
-                row[cell] = 1
+                row[cell] = "O"
             else:
-                row[cell] = 0
-        
-        next_state.append(state[row])
-        
-    return next_state
+                row[cell] = " "
+
+    return state
             
             
 def render(state):
@@ -36,6 +35,8 @@ def render(state):
 
 
 def next_board_state(state):
+    is_alive = "O"
+    is_dead = " " 
     next_state = []
     
     for row in range(0, len(state)):
@@ -43,9 +44,11 @@ def next_board_state(state):
         for cell in range(0, len(state[row])):
             alive = 0
             dead = 0
+            zombie = False
             cell_state = state[row][cell]
             
-            above = 3
+            above = 3    
+            above = 3    
             above_left = 3
             above_right = 3
             below = 3
@@ -53,7 +56,7 @@ def next_board_state(state):
             below_right = 3
             right = 3
             left = 3
-            
+                        
             if row != len(state) - 1 and cell != len(state[row]) - 1:
                 below_right = state[row + 1][cell + 1]
             
@@ -73,59 +76,97 @@ def next_board_state(state):
             
             if cell != len(state[row]) - 1:
                 right = state[row][cell + 1]
-                        
-            if left == 1:
+                            
+            if left == is_alive:
                 alive += 1
-            elif left == 0:
+            elif left == is_dead:
                 dead += 1
+            elif left == "Z":
+                zombie = True
                 
-            if right == 1: 
+            if right == is_alive: 
                 alive += 1
-            elif right == 0:
+            elif right == is_dead:
                 dead += 1
+            elif right == "Z":
+                zombie = True
                                 
-            if above == 1:
+            if above == is_alive:
                 alive += 1
-            elif above == 0:
+            elif above == is_dead:
                 dead += 1
+            elif above == "Z":
+                zombie = True
                                 
-            if below == 1:
+            if below == is_alive:
                 alive += 1
-            elif below == 0:
+            elif below == is_dead:
                 dead += 1
-                
-            if below_left == 1:
-                alive += 1
-            elif below_left == 0:
-                dead += 1
-            
-            if below_right == 1:
-                alive += 1
-            elif below_right == 0:
-                dead += 1
-                
-            if above_left == 1:
-                alive += 1
-            elif above_left == 0:
-                dead += 1
-                
-            if above_right == 1:
-                alive += 1
-            elif above_right == 0:
-                dead += 1
-                
-            if cell_state:
-                if alive <= 1 or alive > 3:
-                    next_state[row].append(0)
-                
-                if alive in range(2,4):
-                    next_state[row].append(1)
+            elif below == "Z":
+                zombie == True        
 
+            if below_left == is_alive:
+                alive += 1
+            elif below_left == is_dead:
+                dead += 1
+            elif below_left == "Z":
+                zombie = True
+
+            if below_right == is_alive:
+                alive += 1
+            elif below_right == is_dead:
+                dead += 1
+            elif below_right == "Z":
+                zombie == True
+            
+            if above_left == is_alive:
+                alive += 1
+            elif above_left == is_dead:
+                dead += 1
+            elif above_left == "Z":
+                zombie == True
+            
+            if above_right == is_alive:
+                alive += 1
+            elif above_right == is_dead:
+                dead += 1
+            elif above_right == "Z":
+                zombie == True
+
+            if zombie == True:
+                next_state[row].append("Z")
+                break
             else:
-                if alive == 3:
-                    next_state[row].append(1)   
+                                
+                if cell_state == is_alive:
+                    if alive <= 1 or alive > 3:
+                        next_state[row].append(is_dead)
+                    
+                    if alive in range(2,4):
+                        next_state[row].append(is_alive)
+
                 else:
-                    next_state[row].append(0)
+                    if alive == 3:
+                        next_state[row].append(is_alive)   
+                    else:
+                        random_num = random.random()
+                        if random_num >= 0.8:
+                            next_state[row].append("Z")
+                        else:
+                            next_state[row].append(is_dead)
         
     return next_state
     
+init_state = random_state(3,3)
+new_state = next_board_state(init_state)
+
+
+while True:
+    os.system('cls')
+    if new_state == next_board_state(new_state):
+        render(new_state)
+        break
+    else:
+        os.system('cls')
+        new_state = next_board_state(new_state)
+        render(new_state)
