@@ -1,9 +1,23 @@
-from life import next_board_state
-from life import render
+from game_of_life import next_board_state
+from game_of_life import render
 
-# TODO: there's a lot of repeated code here. Can
-# you move some of into reusable functions to
-# make it shorter and neater?
+"""
+ TODO: there's a lot of repeated code here. Can
+ you move some of into reusable functions to
+ make it shorter and neater?
+"""
+
+
+def test(test_num, expected_next_state, actual_next_state):
+    if expected_next_state == actual_next_state:
+        print("PASSED", test_num)
+    else:
+        print("FAILED {}!".format(test_num))
+        print("Expected:")
+        render(expected_next_state)
+        print("Actual:")
+        render(actual_next_state)
+
 
 if __name__ == "__main__":
     # TEST 1: dead cells with no live neighbors
@@ -20,15 +34,8 @@ if __name__ == "__main__":
         [0,0,0]
     ]
     actual_next_state1 = next_board_state(init_state1)
-
-    if expected_next_state1 == actual_next_state1:
-        print("PASSED 1")
-    else:
-        print("FAILED 1!")
-        print("Expected:")
-        print(expected_next_state1)
-        print("Actual:")
-        print(actual_next_state1)
+    
+    test("1", expected_next_state1, actual_next_state1)
 
     # TEST 2: dead cells with exactly 3 neighbors
     # should come alive.
@@ -44,35 +51,55 @@ if __name__ == "__main__":
     ]
     actual_next_state2 = next_board_state(init_state2)
 
-    if expected_next_state2 == actual_next_state2:
-        print("PASSED 2")
-    else:
-        print("FAILED 2!")
-        print("Expected:")
-        print(render(expected_next_state2))
-        print("Actual:")
-        print(render(actual_next_state2))
+    test("2", expected_next_state2, actual_next_state2)
     
-    # TEST 3: live cells with 3 or more neighbors
+    # TEST 3: live cells wih more thn 3 live neighbors
     # should die
+
     init_state3 = [
-        [0,1,1],
+        [1,1,1],
         [0,1,1],
         [0,0,0]
     ]
     expected_next_state3 = [
+        [1,0,1],
         [0,0,1],
-        [0,1,1],
         [0,0,0]
     ]
     actual_next_state3 = next_board_state(init_state3)
+
+    test("3", expected_next_state3, actual_next_state3)
     
-    if expected_next_state3 == actual_next_state3:
-        print("PASSED 3")
-    else:
-        print("FAILED 3!")
-        print("Expected:")
-        print(render(expected_next_state3))
-        print("Actual:")
-        print(render(actual_next_state3))
+    # TEST 4: cells on the edges of the board behave 
+    # as expected
+
+    init_state4 = [
+        [1,1,1],
+        [1,0,1],
+        [1,1,1]
+    ]
+    expected_next_state4 = [
+        [1,0,1],
+        [0,0,0],
+        [1,0,1]
+    ]
+    actual_next_state4 = next_board_state(init_state4)
+
+    test("4", expected_next_state4, actual_next_state4)
     
+    # TEST 5: dead cells in corners should come alive
+    # if neighbored by 3 live cells
+
+    init_state5 = [
+        [0,1,0],
+        [1,1,0],
+        [0,0,0]
+    ]
+    expected_next_state5 = [
+        [1,1,0],
+        [1,1,0],
+        [0,0,0]
+    ]
+    actual_next_state5 = next_board_state(init_state5)
+
+    test("5", expected_next_state5, actual_next_state5)
