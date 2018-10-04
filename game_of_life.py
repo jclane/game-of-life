@@ -133,7 +133,7 @@ def next_board_state(state):
             elif above_right == "Z":
                 zombie = True
 
-            if zombie:
+            if zombie and alive < 2:
                 next_state[row].append("Z")
             else:
                                 
@@ -157,7 +157,7 @@ def next_board_state(state):
     return next_state
 
 
-init_state = random_state(3, 3)
+init_state = random_state(50, 50)
 render(init_state)
 new_state = next_board_state(init_state)
 
