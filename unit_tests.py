@@ -1,5 +1,5 @@
-from life import next_board_state
-from life import render
+from game_of_life import next_board_state
+from game_of_life import render
 
 # TODO: there's a lot of repeated code here. Can
 # you move some of into reusable functions to
