@@ -1,10 +1,11 @@
 import random
 import os
+from time import sleep
 
 
 def dead_state(width, height):
     state = []
-    for i in range(0,height):
+    for i in range(0, height):
         state.append([" "] * width)
     return state
 
@@ -46,8 +47,7 @@ def next_board_state(state):
             dead = 0
             zombie = False
             cell_state = state[row][cell]
-            
-            above = 3    
+
             above = 3    
             above_left = 3
             above_right = 3
@@ -103,7 +103,7 @@ def next_board_state(state):
             elif below == is_dead:
                 dead += 1
             elif below == "Z":
-                zombie == True        
+                zombie = True
 
             if below_left == is_alive:
                 alive += 1
@@ -117,32 +117,31 @@ def next_board_state(state):
             elif below_right == is_dead:
                 dead += 1
             elif below_right == "Z":
-                zombie == True
+                zombie = True
             
             if above_left == is_alive:
                 alive += 1
             elif above_left == is_dead:
                 dead += 1
             elif above_left == "Z":
-                zombie == True
+                zombie = True
             
             if above_right == is_alive:
                 alive += 1
             elif above_right == is_dead:
                 dead += 1
             elif above_right == "Z":
-                zombie == True
+                zombie = True
 
-            if zombie == True:
+            if zombie:
                 next_state[row].append("Z")
-                break
             else:
                                 
                 if cell_state == is_alive:
                     if alive <= 1 or alive > 3:
                         next_state[row].append(is_dead)
                     
-                    if alive in range(2,4):
+                    if alive in range(2, 4):
                         next_state[row].append(is_alive)
 
                 else:
@@ -156,8 +155,10 @@ def next_board_state(state):
                             next_state[row].append(is_dead)
         
     return next_state
-    
-init_state = random_state(3,3)
+
+
+init_state = random_state(3, 3)
+render(init_state)
 new_state = next_board_state(init_state)
 
 
@@ -167,6 +168,8 @@ while True:
         render(new_state)
         break
     else:
-        os.system('cls')
         new_state = next_board_state(new_state)
         render(new_state)
+        sleep(1)
+
+
