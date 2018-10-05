@@ -5,6 +5,14 @@ from sys import exit
 
 
 def dead_state(width, height):
+    """
+    Create board filled with dead cells.
+
+    :param width: integer indicating width to make the board
+    :param height: integer indicating height to make the board
+    :return: Board sized width*height filled with dead cells.
+    """
+
     state = []
     for i in range(0, height):
         state.append([" "] * width)
@@ -12,6 +20,17 @@ def dead_state(width, height):
 
 
 def random_state(width, height):
+    """
+    Creates a dead_state board and then
+    randomly populates that board with
+    live cells.
+
+    :param width: integer indicating width to make the board
+    :param height: integer indicating height to make the board
+    :return: Board sized width*height randomly filled with
+        dead/live cells
+    """
+
     state = dead_state(width, height)
         
     for row in state:
@@ -26,6 +45,13 @@ def random_state(width, height):
             
             
 def render(state):
+    """
+    Pretty prints the board.
+
+    :param state: list representing board to be printed
+    :return: visually appealing output of current board
+    """
+
     top_and_bottom_border = ("-" * len(state[0])) * 2
     
     print(" " + top_and_bottom_border)
@@ -37,6 +63,13 @@ def render(state):
 
 
 def next_board_state(state):
+    """
+    Use previous board state to generate next state.
+
+    :param state: list as current state of board
+    :return: new board
+    """
+
     is_alive = "O"
     is_dead = " " 
     next_state = dead_state(len(state), len(state[0]))
@@ -81,12 +114,12 @@ def next_board_state(state):
                 pass
                 continue
 
-            for key in neighbors:
-                if neighbors[key] == is_alive:
+            for neighbor in neighbors:
+                if neighbors[neighbor] == is_alive:
                     alive += 1
-                elif neighbors[key] == is_dead:
+                elif neighbors[neighbor] == is_dead:
                     dead += 1
-                elif neighbors[key] == "Z":
+                elif neighbors[neighbor] == "Z":
                     zombie = True
 
             if zombie and alive < 2:
@@ -114,14 +147,26 @@ def next_board_state(state):
 
     
 def run_it(state):
+    """
+    Continuously generate new boards with
+    live/dead/zombie cells.
+
+    If new_state is the same as the next
+    state the loop will exit else it will
+    continue.
+
+    :param state: list as initial state of
+        the board
+    """
+
     while True:
-        new_state = next_board_state(init_state)
+        new_state = next_board_state(state)
         os.system('cls')
-        if new_state == next_board_state(new_state):
+        if new_state == next_board_state(state):
             render(new_state)
             exit()
         else:
-            new_state = next_board_state(new_state)
+            new_state = next_board_state(state)
             render(new_state)
             sleep(1)
 
@@ -130,10 +175,10 @@ first_run = True
     
 while True:
     
-    if first_run == True:
+    if first_run:
         print("Welcome to game_of_life (now with zombies)\n")
-        width, height = input("Enter width and height separeted by a comma [10, 10] >> ").split(",")
-        first_run == False          
+        width, height = input("Enter width and height separated by a comma [10, 10] >> ").split(",")
+        first_run = False
         init_state = random_state(int(width), int(height))
         render(init_state)
         run_it(init_state)
@@ -142,7 +187,7 @@ while True:
         if not cont.lower().startswith("y"):
             exit()
         else:
-            width, height = input("Enter width and height separeted by a comma [10, 10] >> ").split(",")
+            width, height = input("Enter width and height separated by a comma [10, 10] >> ").split(",")
             init_state = random_state(int(width), int(height))
             render(init_state)
             run_it(init_state)
