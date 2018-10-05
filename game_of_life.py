@@ -1,6 +1,7 @@
 import random
 import os
 from time import sleep
+from sys import exit
 
 
 def dead_state(width, height):
@@ -38,35 +39,11 @@ def render(state):
 def next_board_state(state):
     is_alive = "O"
     is_dead = " " 
-    next_state = []
-
-    def set_cell_state(row, cell):
-        cell_state = state[row][cell]
-
-        if zombie and alive < 2:
-            next_state[row].append("Z")
-        else:
-
-            if cell_state == is_alive:
-                if alive <= 1 or alive > 3:
-                    next_state[row].append(is_dead)
-
-                if alive in range(2, 4):
-                    next_state[row].append(is_alive)
-
-            else:
-                if alive == 3:
-                    next_state[row].append(is_alive)
-                else:
-                    random_num = random.random()
-                    if random_num >= 0.8:
-                        next_state[row].append("Z")
-                    else:
-                        next_state[row].append(is_dead)
+    next_state = dead_state(len(state), len(state[0]))
 
     for row in range(0, len(state)):
-        next_state.append([])
         for cell in range(0, len(state[row])):
+            cell_state = state[row][cell]
             alive = 0
             dead = 0
             zombie = False
@@ -112,22 +89,60 @@ def next_board_state(state):
                 elif neighbors[key] == "Z":
                     zombie = True
 
-            set_cell_state(row, cell)
+            if zombie and alive < 2:
+                next_state[row][cell] = "Z"
+            else:
+
+                if cell_state == is_alive:
+                    if alive <= 1 or alive > 3:
+                        next_state[row][cell] = is_dead
+
+                    if alive in range(2, 4):
+                        next_state[row][cell] = is_alive
+
+                else:
+                    if alive == 3:
+                        next_state[row][cell] = is_alive
+                    else:
+                        random_num = random.random()
+                        if random_num >= 0.8:
+                            next_state[row][cell] = "Z"
+                        else:
+                            next_state[row][cell] = is_dead
 
     return next_state
 
+    
+def run_it(state):
+    while True:
+        new_state = next_board_state(init_state)
+        os.system('cls')
+        if new_state == next_board_state(new_state):
+            render(new_state)
+            exit()
+        else:
+            new_state = next_board_state(new_state)
+            render(new_state)
+            sleep(1)
 
-init_state = random_state(3, 3)
-render(init_state)
-new_state = next_board_state(init_state)
 
-
+first_run = True    
+    
 while True:
-    os.system('cls')
-    if new_state == next_board_state(new_state):
-        render(new_state)
-        break
+    
+    if first_run == True:
+        print("Welcome to game_of_life (now with zombies)\n")
+        width, height = input("Enter width and height separeted by a comma [10, 10] >> ").split(",")
+        first_run == False          
+        init_state = random_state(int(width), int(height))
+        render(init_state)
+        run_it(init_state)
     else:
-        new_state = next_board_state(new_state)
-        render(new_state)
-        sleep(1)
+        cont = input("Would you like to see more?  [y/N] ")
+        if not cont.lower().startswith("y"):
+            exit()
+        else:
+            width, height = input("Enter width and height separeted by a comma [10, 10] >> ").split(",")
+            init_state = random_state(int(width), int(height))
+            render(init_state)
+            run_it(init_state)
