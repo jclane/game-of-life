@@ -145,6 +145,25 @@ def next_board_state(state):
 
     return next_state
 
+def save_state(state):
+    """
+    Save state to text file.
+
+    :param state: state as list to be save
+    """
+
+    # TODO: Create save state function
+
+
+def load_state():
+    """
+    Load state from text file.
+
+    :return: load chosen state from text file
+    """
+
+    # TODO: Create load state function
+
     
 def run_it(state):
     """
@@ -171,6 +190,15 @@ def run_it(state):
             sleep(1)
 
 
+def print_menu():
+    """
+    Prints the menu.
+
+    :return: Visually appealing output of menu items.
+    """
+
+    # TODO: create menu function
+
 first_run = True    
     
 while True:
@@ -181,7 +209,12 @@ while True:
         first_run = False
         init_state = random_state(int(width), int(height))
         render(init_state)
-        run_it(init_state)
+        save = input("Would you like to save this start state? [y/N]")
+        if save.lower().startswith("y"):
+            # save_state(init_state)
+            run_it(init_state)
+        else:
+            run_it(init_state)
     else:
         cont = input("Would you like to see more?  [y/N] ")
         if not cont.lower().startswith("y"):
