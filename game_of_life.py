@@ -147,6 +147,7 @@ def next_board_state(state):
 
     return next_state
 
+
 def save_state(state):
     """
     Save state to text file.
@@ -182,12 +183,28 @@ def load_state():
     file = "saved_boards.csv"
 
     if path.exists(file):
+        saved_states_dict = {}
+
         with open(file, "r", newline="") as csvfile:
             reader = csv.reader(csvfile, delimiter="/", quotechar="'")
-            state = (row for row in reader)
-            print(state)
+            saved_states = (row for row in reader)
+            for state in saved_states:
+                state_name = state[0]
+                state_board = []
+                for row in state[1:]:
+                    row = row.split(",")
+                    state_board.append(row)
+                print(state_name)
+                render(state_board)
+                saved_states_dict[state_name] = state_board
 
-    
+            choice = input("Enter the name of the saved state you wish to load >> ")
+
+            init_state = saved_states_dict[choice]
+            render(init_state)
+            run_it(init_state)
+
+
 def run_it(state):
     """
     Continuously generate new boards with
@@ -220,9 +237,9 @@ def print_menu():
     :return: Visually appealing output of menu items.
     """
 
-    MENU = {1:"New",
-            2:"Load",
-            3:"Quit"
+    MENU = {1: "New",
+            2: "Load",
+            3: "Quit"
     }
 
     print("Welcome to game_of_life (now with zombies)\n")
