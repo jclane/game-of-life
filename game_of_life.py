@@ -1,5 +1,6 @@
 import random
 import os
+import csv
 from time import sleep
 from sys import exit
 
@@ -153,6 +154,9 @@ def save_state(state):
     """
 
     # TODO: Create save state function
+    with open("saved_boards.csv", "w", newline="") as csvfile:
+        writer = csv.writer(csvfile, delimiter=" ", quotechar="|")
+        writer.writerow(state)
 
 
 def load_state():
@@ -211,7 +215,7 @@ while True:
         render(init_state)
         save = input("Would you like to save this start state? [y/N]")
         if save.lower().startswith("y"):
-            # save_state(init_state)
+            save_state(init_state)
             run_it(init_state)
         else:
             run_it(init_state)
