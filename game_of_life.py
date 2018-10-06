@@ -1,6 +1,7 @@
 import random
 import os
 import csv
+from os import path
 from time import sleep
 from sys import exit
 
@@ -153,10 +154,22 @@ def save_state(state):
     :param state: state as list to be save
     """
 
-    # TODO: Create save state function
-    with open("saved_boards.csv", "w", newline="") as csvfile:
-        writer = csv.writer(csvfile, delimiter=" ", quotechar="|")
-        writer.writerow(state)
+    file = "saved_boards.csv"
+
+    name = input("Enter a name save as >> ")
+
+    if path.exists(file):
+        with open(file, "a", newline="") as csvfile:
+            writer = csv.writer(csvfile, delimiter="/", quotechar="'")
+            to_write = list((",".join(row) for row in state))
+            to_write.insert(0, name)
+            writer.writerow(to_write)
+    else:
+        with open("saved_boards.csv", "w", newline="") as csvfile:
+            writer = csv.writer(csvfile, delimiter="/", quotechar="'")
+            to_write = list((",".join(row) for row in state))
+            to_write.insert(0, name)
+            writer.writerow(to_write)
 
 
 def load_state():
@@ -166,7 +179,13 @@ def load_state():
     :return: load chosen state from text file
     """
 
-    # TODO: Create load state function
+    file = "saved_boards.csv"
+
+    if path.exists(file):
+        with open(file, "r", newline="") as csvfile:
+            reader = csv.reader(csvfile, delimiter="/", quotechar="'")
+            state = (row for row in reader)
+            print(state)
 
     
 def run_it(state):
@@ -201,16 +220,19 @@ def print_menu():
     :return: Visually appealing output of menu items.
     """
 
-    # TODO: create menu function
+    MENU = {1:"New",
+            2:"Load",
+            3:"Quit"
+    }
 
-first_run = True    
-    
-while True:
-    
-    if first_run:
-        print("Welcome to game_of_life (now with zombies)\n")
+    print("Welcome to game_of_life (now with zombies)\n")
+    for num in range(1, len(MENU) + 1):
+        print("{}. {}".format(str(num), MENU[num]))
+
+    choice = input("What would you like to do? [1-{}] >> ".format(len(MENU) + 1))
+
+    if choice == "1":
         width, height = input("Enter width and height separated by a comma [10, 10] >> ").split(",")
-        first_run = False
         init_state = random_state(int(width), int(height))
         render(init_state)
         save = input("Would you like to save this start state? [y/N]")
@@ -219,12 +241,12 @@ while True:
             run_it(init_state)
         else:
             run_it(init_state)
-    else:
-        cont = input("Would you like to see more?  [y/N] ")
-        if not cont.lower().startswith("y"):
-            exit()
-        else:
-            width, height = input("Enter width and height separated by a comma [10, 10] >> ").split(",")
-            init_state = random_state(int(width), int(height))
-            render(init_state)
-            run_it(init_state)
+    if choice == "2":
+        load_state()
+    if choice == "3":
+        exit()
+
+
+while True:
+
+    print_menu()
