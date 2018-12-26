@@ -64,88 +64,63 @@ def render(state):
     print(" " + top_and_bottom_border)
 
 
-def next_board_state(state):
-    """
-    Use previous board state to generate next state.
+    def next_board_state(state):
+        is_alive = 1
+        is_dead = 0 
+        next_state = dead_state(len(state), len(state[0]))
+        for row in range(0, len(state)):
+            for cell in range(0, len(state[row])):
+                cell_state = state[row][cell]
+                alive = 0
+                dead = 0
 
-    :param state: list as current state of board
-    :return: new board
-    """
+                neighbors = {
+                    "above": 3,
+                    "above_left": 3,
+                    "above_right": 3,
+                    "below": 3,
+                    "below_left": 3,
+                    "below_right": 3,
+                    "right": 3,
+                    "left": 3
+                }
 
-    is_alive = "O"
-    is_dead = " " 
-    next_state = dead_state(len(state), len(state[0]))
-
-    for row in range(0, len(state)):
-        for cell in range(0, len(state[row])):
-            cell_state = state[row][cell]
-            alive = 0
-            dead = 0
-            zombie = False
-
-            neighbors = {
-                "above": 3,
-                "above_left": 3,
-                "above_right": 3,
-                "below": 3,
-                "below_left": 3,
-                "below_right": 3,
-                "right": 3,
-                "left": 3
-            }
-
-            try:
                 for neighbor in neighbors:
-                    if neighbor == "above":
-                        neighbors[neighbor] = state[row + 1][cell + 1]
-                    if neighbor == "above_left":
-                        neighbors[neighbor] = state[row - 1][cell + 1]
-                    if neighbor == "above_right":
+                    if neighbor == "above" and row != 0:
                         neighbors[neighbor] = state[row - 1][cell]
-                    if neighbor == "below":
+                    if neighbor == "above_left" and row != 0 and cell != 0:
                         neighbors[neighbor] = state[row - 1][cell - 1]
-                    if neighbor == "below_left":
+                    if neighbor == "above_right" and row != 0 and cell + 1 < len(state[row]):
+                        neighbors[neighbor] = state[row - 1][cell + 1]
+                    if neighbor == "below" and row + 1 < len(state):
                         neighbors[neighbor] = state[row + 1][cell]
-                    if neighbor == "below_right":
+                    if neighbor == "below_left" and row + 1 < len(state) and cell != 0:
                         neighbors[neighbor] = state[row + 1][cell - 1]
-                    if neighbor == "right":
-                        neighbors[neighbor] = state[row][cell - 1]
-                    if neighbor == "left":
+                    if neighbor == "below_right" and row + 1 < len(state) and cell + 1 < len(state[row]):
+                        neighbors[neighbor] = state[row + 1][cell + 1]
+                    if neighbor == "right" and cell + 1 < len(state[row]):
                         neighbors[neighbor] = state[row][cell + 1]
-            except IndexError:
-                pass
-                continue
+                    if neighbor == "left" and cell != 0:
+                        neighbors[neighbor] = state[row][cell - 1]
 
-            for neighbor in neighbors:
-                if neighbors[neighbor] == is_alive:
-                    alive += 1
-                elif neighbors[neighbor] == is_dead:
-                    dead += 1
-                elif neighbors[neighbor] == "Z":
-                    zombie = True
-
-            if zombie and alive < 2:
-                next_state[row][cell] = "Z"
-            else:
-
+                for neighbor in neighbors:
+                    if neighbors[neighbor] == is_alive:
+                        alive += 1
+                    elif neighbors[neighbor] == is_dead:
+                        dead += 1
+                                
                 if cell_state == is_alive:
-                    if alive <= 1 or alive > 3:
+                    if alive < 2 or alive > 3:
                         next_state[row][cell] = is_dead
-
-                    if alive in range(2, 4):
-                        next_state[row][cell] = is_alive
-
+                    else:
+                        next_state[row][cell] = cell_state
                 else:
                     if alive == 3:
                         next_state[row][cell] = is_alive
                     else:
-                        random_num = random.random()
-                        if random_num >= 0.8:
-                            next_state[row][cell] = "Z"
-                        else:
-                            next_state[row][cell] = is_dead
-
-    return next_state
+                        next_state[row][cell] = cell_state
+  
+        return next_state
 
 
 def save_state(state):
